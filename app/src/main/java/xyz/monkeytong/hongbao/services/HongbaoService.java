@@ -13,8 +13,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+
+import xyz.monkeytong.hongbao.dao.ActivityDao;
+import xyz.monkeytong.hongbao.entity.ActiveStatus;
 import xyz.monkeytong.hongbao.utils.HongbaoSignature;
 import xyz.monkeytong.hongbao.utils.PowerUtil;
+import xyz.monkeytong.hongbao.utils.VerifyActivityUtil;
 
 import java.util.List;
 
@@ -41,6 +45,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
 
     private PowerUtil powerUtil;
     private SharedPreferences sharedPreferences;
+    private ActivityDao activityDao;
 
     /**
      * AccessibilityEvent
@@ -50,20 +55,22 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (sharedPreferences == null) return;
-
-        setCurrentActivityName(event);
-
-        /* 检测通知消息 */
-        if (!mMutex) {
-            if (sharedPreferences.getBoolean("pref_watch_notification", false) && watchNotifications(event)) return;
-            if (sharedPreferences.getBoolean("pref_watch_list", false) && watchList(event)) return;
-            mListMutex = false;
-        }
-
-        if (!mChatMutex) {
-            mChatMutex = true;
-            if (sharedPreferences.getBoolean("pref_watch_chat", false)) watchChat(event);
-            mChatMutex = false;
+        //验证是否在有效期内
+        ActiveStatus activeStatus = activityDao.getActiveStatus();
+        if(VerifyActivityUtil.verifyActivityStatus(activeStatus)){
+            //验证通过
+            setCurrentActivityName(event);
+            /* 检测通知消息 */
+            if (!mMutex) {
+                if (sharedPreferences.getBoolean("pref_watch_notification", false) && watchNotifications(event)) return;
+                if (sharedPreferences.getBoolean("pref_watch_list", false) && watchList(event)) return;
+                mListMutex = false;
+            }
+            if (!mChatMutex) {
+                mChatMutex = true;
+                if (sharedPreferences.getBoolean("pref_watch_chat", false)) watchChat(event);
+                mChatMutex = false;
+            }
         }
     }
 
@@ -311,6 +318,8 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         this.powerUtil = new PowerUtil(this);
         Boolean watchOnLockFlag = sharedPreferences.getBoolean("pref_watch_on_lock", false);
         this.powerUtil.handleWakeLock(watchOnLockFlag);
+
+        this.activityDao = new ActivityDao(this);
     }
 
     @Override
