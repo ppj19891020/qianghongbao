@@ -36,6 +36,9 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
     private AccessibilityManager accessibilityManager;
     private ActivityDao activityDao;
 
+    //状态
+    private TextView statusText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,11 +46,14 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
         setContentView(R.layout.activity_main);
         pluginStatusText = (TextView) findViewById(R.id.layout_control_accessibility_text);
         pluginStatusIcon = (ImageView) findViewById(R.id.layout_control_accessibility_icon);
+        statusText = (TextView) findViewById(R.id.veryStatus);
         handleMaterialStatusBar();
         explicitlyLoadPreferences();
 
-        //初始化
+        //初始化状态
         activityDao = new ActivityDao(MainActivity.this);
+        String statusStr = VerifyActivityUtil.verifyActivityStatusStr(activityDao.getActiveStatus());
+        statusText.setText(statusText.getText()+ statusStr);
 
         //监听AccessibilityService 变化
         accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
