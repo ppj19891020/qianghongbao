@@ -22,6 +22,7 @@ import java.util.List;
 import xyz.monkeytong.hongbao.R;
 import xyz.monkeytong.hongbao.fragments.GeneralSettingsFragment;
 import xyz.monkeytong.hongbao.utils.ConnectivityUtil;
+import xyz.monkeytong.hongbao.utils.DbUtil;
 import xyz.monkeytong.hongbao.utils.UpdateTask;
 
 import com.tencent.bugly.crashreport.CrashReport;
@@ -34,6 +35,7 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
     private ImageView pluginStatusIcon;
     //AccessibilityService 管理
     private AccessibilityManager accessibilityManager;
+    private DbUtil dbUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,12 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
         setContentView(R.layout.activity_main);
         pluginStatusText = (TextView) findViewById(R.id.layout_control_accessibility_text);
         pluginStatusIcon = (ImageView) findViewById(R.id.layout_control_accessibility_icon);
+
+        //初始化数据库
+        dbUtil = new DbUtil(MainActivity.this);
+
+        //获取激活状态
+        dbUtil.getActiveStatus();
 
         handleMaterialStatusBar();
 

@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Created by Zhongyi on 1/20/16.
  * Util for app update task.
  */
 public class UpdateTask extends AsyncTask<String, String, String> {

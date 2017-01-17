@@ -5,7 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 /**
- * Created by Zhongyi on 1/29/16.
+ * 网络连接判断工具
  */
 public class ConnectivityUtil {
     public static boolean isWifi(Context context) {
