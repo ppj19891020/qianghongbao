@@ -29,7 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         //sqLiteDatabase.execSQL(createDatabaseSQL);
         sqLiteDatabase.execSQL(createActiveSql);
-        sqLiteDatabase.execSQL("INSERT INTO Activate(active_status,first_time) VALUES("+ ActivityEnum.NOTACTIVITY.getCode()+",datetime('now'));");//插入初始状态
+        sqLiteDatabase.execSQL("INSERT INTO Activate(active_status,first_time) VALUES('"+ ActivityEnum.NOTACTIVITY.getCode()+"',datetime('now'));");//插入初始状态
     }
 
     @Override
